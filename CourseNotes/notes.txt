@@ -1,0 +1,2 @@
+Course Link: https://www.youtube.com/watch?v=yyUHQIec83I
+Go Standard Library: https://pkg.go.dev/std
