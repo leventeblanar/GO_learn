@@ -39,24 +39,28 @@ func main() {
 		
 		fmt.Println("Enter number of tickets: ")
 		fmt.Scan(&userTickets)
+		
+		if userTickets <= int(remainingTickets) {
+			remainingTickets = remainingTickets - uint(userTickets)
+			bookings = append(bookings, firstName + " " + lastName)
 
-		remainingTickets = remainingTickets - uint(userTickets)
-		bookings = append(bookings, firstName + " " + lastName)
+			fmt.Printf("Thank you %v %v for booking %v tickets. You will receive a confirmation email at %v. \n", firstName, lastName, userTickets, email)
+			fmt.Printf("%v tickets remaning for %v\n", remainingTickets, conferenceName)
 
-		fmt.Printf("Thank you %v %v for booking %v tickets. You will receive a confirmation email at %v. \n", firstName, lastName, userTickets, email)
-		fmt.Printf("%v tickets remaning for %v\n", remainingTickets, conferenceName)
+			firstNames := []string{}
+			for _, booking := range bookings { 				// underscore identifies unused variable
+				var names = strings.Fields(booking)
+				firstNames = append(firstNames, names[0])
+			}
+			fmt.Printf("These are all our bookings: %v\n", firstNames)
 
-		firstNames := []string{}
-		for _, booking := range bookings { 				// underscore identifies unused variable
-			var names = strings.Fields(booking)
-			firstNames = append(firstNames, names[0])
-		}
-		fmt.Printf("These are all our bookings: %v\n", firstNames)
-
-		if remainingTickets == 0 {
-			// function to end program
-			fmt.Println("Our conference is booked out. Come back next year.")
-			break
+			if remainingTickets == 0 {
+				// function to end program
+				fmt.Println("Our conference is booked out. Come back next year.")
+				break
+			}
+		} else {
+			fmt.Printf("We only have %v tickets remaining, so you can't book %v tickets.\n", remainingTickets, userTickets)
 		}
 	}
 }
