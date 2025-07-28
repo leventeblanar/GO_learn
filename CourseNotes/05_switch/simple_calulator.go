@@ -8,8 +8,18 @@ func main() {
 
 	for {
 		var operator string
-		fmt.Println("Enter operator: +, -, *, /")
+		fmt.Println("Enter operator: +, -, *, /. You can enter 'exit' to quit.")
 		fmt.Scan(&operator)
+
+		if operator != "+" && operator !="-" && operator !="*" && operator != "/" {
+			fmt.Println("Unkown operator. Pleaser use: +, -, *, /.")
+			continue
+		}
+
+		if operator == "exit" {
+			fmt.Println("Goodbye!")
+			break
+		}
 
 		var num1, num2 float64
 		fmt.Println("Enter two numbers: ")
