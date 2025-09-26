@@ -4,23 +4,22 @@ import (
 	"fmt"
 )
 
-func makeCounter() func(int) int {
-	sum := 0
-	return func() int {
-		sum += 1
-		return sum
+func makeAccount(balance int) func(int) int {
+
+	currentBalance := balance
+	return func(amount int) int {
+		currentBalance = currentBalance + amount
+		return currentBalance
 	}
 }
 
 
-func main() {
-	counterA := makeCounter()
-	counterB := makeCounter()
 
-	fmt.Println(counterA())
-	fmt.Println(counterA())
-	fmt.Println(counterA())
-	
-	fmt.Println(counterB())
-	fmt.Println(counterB())
+func main() {
+	account := makeAccount(100)
+
+	fmt.Println(account(50))
+	fmt.Println(account(-50))
+	fmt.Println(account(250))
+	fmt.Println(account(-450))
 }
