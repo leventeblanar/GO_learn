@@ -34,3 +34,37 @@ func makeAllPositive(nums []int) {
 		}
 	}
 }
+
+
+
+//  MAKE() 
+
+//  A make() új sliceot hoz létre a memóriában és megadhatod neki
+//  	- a hosszát (mennyi elem legyen elérhető azonnal)
+// 		- a kapacitását (mennyi hely van lefoglalva a háttérben)
+
+func mapExample() {
+	// csak length
+	s1 := make([]int, 5)
+	fmt.Println(s1)
+	fmt.Println("len:", len(s1), "cap:", cap(s1))
+	// -> 5 elem, 5 kapacitás
+
+	// length és cap külön
+	s2 := make([]int, 3 ,5)
+	fmt.Println(s2)
+	fmt.Println("len:", len(s2), "cap:", cap(s2))
+	// -> 3 elem, de háttérben 5 hely
+
+	// append
+	s2 = append(s2, 10, 20)
+	fmt.Println(s2)
+	fmt.Println("len:", len(s2), "cap:", cap(s2))
+	// -> 5 elem, 5 kapactiás -> pont kitelt
+
+	// még egy append
+	s2 = append(s2, 99)
+	fmt.Println(s2)
+	fmt.Println("len:", len(s2), "cap:", cap(s2))
+	// -> 6 elem, 10 kapacitás -> Go új tömböt allkotált dupla mérettel
+}

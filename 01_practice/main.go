@@ -4,22 +4,16 @@ import (
 	"fmt"
 )
 
-func makeAccount(balance int) func(int) int {
-
-	currentBalance := balance
-	return func(amount int) int {
-		currentBalance = currentBalance + amount
-		return currentBalance
-	}
+func swap(a, b *int) {
+	temp := *a
+	*a = *b
+	*b = temp
 }
 
 
-
 func main() {
-	account := makeAccount(100)
+	a, b := 10, 20
 
-	fmt.Println(account(50))
-	fmt.Println(account(-50))
-	fmt.Println(account(250))
-	fmt.Println(account(-450))
+	swap(&a, &b)
+	fmt.Println(a, b)
 }
