@@ -4,16 +4,33 @@ import (
 	"fmt"
 )
 
-func swap(a, b *int) {
-	temp := *a
-	*a = *b
-	*b = temp
+type CanSpeak interface {
+	Speak()		string
 }
 
+type Dog struct {
+	Name		string
+}
+
+type Cat struct {
+	Name		string
+}
+
+func (d Dog) Speak() string {
+	return d.Name + " says: Woof!"
+}
+
+func (c Cat) Speak() string {
+	return c.Name + " says: Meow!"
+}
 
 func main() {
-	a, b := 10, 20
+	animals := []CanSpeak{
+		Dog{Name: "Buddy"},
+		Cat{Name: "Mittens"},
+	}
 
-	swap(&a, &b)
-	fmt.Println(a, b)
+	for _, a := range animals {
+		fmt.Println(a.Speak())
+	}
 }
