@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-// Egy olyan függvény, ami tetszőleges számú paramétert képes fogadniegy bizonyos típusból
+// Egy olyan függvény, ami tetszőleges számú paramétert képes fogadni egy bizonyos típusból
 // ilyenkor a nums egy slice-ként érkezik a függvénybe
 // lehet, hogy 0, 1 vagy több értéket adunk át, és mind ugyan úgy kezelhető
 // olyan esetekre jó, ha nem tudjuk előre, hány számot akarunk összegezni, vagy hány stringet akarunk összefűzni
