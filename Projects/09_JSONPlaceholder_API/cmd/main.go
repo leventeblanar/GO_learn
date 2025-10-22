@@ -17,7 +17,7 @@ func main() {
 
 	todos, err := client.GetResponsefromApi(ctx)
 	if err != nil {
-		log.Fatalf("unable to fetch jsonresponse: %w", err)
+		log.Fatalf("unable to fetch jsonresponse: %s", err)
 	}
 
 	const maxEntries = 12
