@@ -57,7 +57,6 @@ func safeOperation() {
 	}()
 
 	panic("Something went wrong")
-	fmt.Println("cannot reach this code")
 }
 
 

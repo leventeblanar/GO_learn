@@ -2,114 +2,40 @@ package main
 
 import (
 	"fmt"
-	"time"
+	"errors"
 )
 
-//	Go-ban a range kulcsoszóval általában kollekciókat járunk be
-
-//	for i, v := range []int{10, 20, 30} {
-//	fmt.Println(i, v)}
-
-//	ez működik szeletekkel, mapekkel, stringekkel, csatornákkal - de eddig nem működött olyan saját típusokkal, amiket te hozol létre (pl. egy saját iterátor)
-
-// 	Miért kell range over iterators?
-// 	korábban csak két lehetőség (Channel -a go routine küldi, a range olvassa || Next() metódus - explicit, kézzel kell ciklizni)
-
-//			for v := range MyGenerator() {
-// 				fmt.Println(v)
-// 			}
-// ez pl egy range function egy függvényen iterál és addig hívogatja a "yield" hívást amíg az vissza nem tér false-al
-
-
-//////////////////////////////////////////////
-/// 	1. Channel alapú iterátor
-//////////////////////////////////////////////
-
-
-// 	CountwithChannel visszaad egy <- chan int-et
-//	a goroutine tölti fel a számokat, a for-range olvassa
-func CountWithChannel(n int) <-chan int {
-	ch := make(chan int)
-
-	go func() {
-		defer close(ch)  				// amikor vége bezárjuka. csatornát
-		for i := 1; i <= n; i++ {
-			ch <- 1						// küldjük a számokat
-			time.Sleep(100 * time.Millisecond)  //csak hogy látni lehessen a sorrendet
-		}
-	}()
-	return ch							// visszaadjuk a csatornát
+type Account struct {
+	owner		string
+	balance		float64
 }
 
-
-
-
-
-//////////////////////////////////////////////
-/// 	2. NEXT() Metódusos iterátor
-//////////////////////////////////////////////
-
-// Struct tárolja az állapotot
-type Counter struct {
-	current			int
-	limit			int
+func (a *Account) Deposit(amount float64) {
+	a.balance += amount
+	fmt.Printf("%s befizetett %.2f. Új egyenleg: %.2f\n", a.owner, amount, a.balance)
 }
 
-// konstruktor
-func NewCounter(limit int) *Counter {
-	return &Counter{current:0, limit: limit}
-}
-
-// Next() egyenként adja a számokat
-// Ha elérte a határt, false-szal jelzi a végét
-func (c *Counter) Next() (int, bool) {
-	if c.current >= c.limit {
-		return 0, false
+func (a *Account) Withdrawn(amount float64) error {
+	if a.balance < amount {
+		return errors.New("nincs elég fedezet a számlán")
 	}
-	c.current++
-	return c.current, true
+	a.balance -= amount
+	fmt.Printf("%s kivett %.2f. Új egyenleg: %.2f\n", a.owner, amount, a.balance)
+	return nil
 }
 
-
-
-
-
-//////////////////////////////////////////////
-/// 	3. Range-over-func (Go 1.22+)
-//////////////////////////////////////////////
-
-//CountWithRangeFunc visszaad egy olyan függvényt
-// amit a range be tud járni
-func CountWithRangeFunc(n int) func(yield func(int) bool) {
-	return func(yield func(int) bool) {
-		for i := 1; i <= n; i++ {
-			if !yield(i) {				// ha a for-range leállítja
-				return
-			}
-		}
-	}
+func (a Account) GetBalance() float64 {
+	return a.balance
 }
-
-
-
 
 func main() {
-
-	fmt.Println("\n--- Chanel alapú iterátor ---")
-	for v := range CountWithChannel(5) {
-		fmt.Println(v)
+	lblanarAccount := Account{
+		owner: "Blanar Levente",
+		balance: 10000.0,
 	}
 
+	fmt.Printf("Kezdő egyenleg: %.2f\n\n", lblanarAccount.GetBalance())
+	lblanarAccount.Deposit(200)
 
-	fmt.Println("\n--- Next() metódusos iterátor ---")
-	c := NewCounter(5)
-	for val, ok := c.Next(); ok; val, ok = c.Next() {
-		fmt.Println(val)
-	}
-
-	
-	fmt.Println("\n--- Range-over-func iterator ---")
-	for v:= range CountWithRangeFunc(5) {
-		fmt.Println(v)
-	}
+	lblanarAccount.Withdrawn(100)
 }
