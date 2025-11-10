@@ -29,7 +29,7 @@ func main() {
 	connStr := os.Getenv("ATLAS_DB")
 	fmt.Println("Connection string:", connStr)
 
-	// Ha nincs benne az sllmode, adjuk hozá
+	// Ha nincs benne az sllmode, adjuk hozzá
 	if !strings.Contains(connStr, "sslmode") {
 		connStr += "?sslmode=disable"
 	}
