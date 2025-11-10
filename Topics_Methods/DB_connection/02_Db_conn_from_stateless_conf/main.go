@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	fmt.Println("== Stateless DB Connector Demo ===\n")
+	fmt.Printf("== Stateless DB Connector Demo ===\n")
 
 	db, err := ConnectDb()
 	if err != nil {

@@ -1,2 +1,37 @@
 Projects/04_GitHub_user_activity/.env
 Projects/11_Db_connection/.env
+Topics_Methods/Db_connection/.env
+
+# Environment variables
+.env
+.env.*
+*.env
+
+# IDE/Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Go
+*.exe
+*.test
+*.out
+go.work
+
+# Logs
+*.log
+logs/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Backup files
+*.bak
+*.backup
