@@ -218,3 +218,56 @@ func (t *TrackRepository)DeleteTrack(trackId int) error {
 
 	return nil
 }
+
+
+func (t *TrackRepository) DeleteTrackForce(trackId int) error {
+
+	var trackExists bool
+	checkQuery := `SELECT EXISTS (SELECT 1 FROM track WHERE track_id = $1)`
+
+	err := t.db.QueryRow(checkQuery, trackId).Scan(&trackExists)
+	if err != nil {
+		return fmt.Errorf("error checking track: %w", err)
+	}
+
+	if !trackExists {
+		return fmt.Errorf("track %d not found", trackId)
+	}
+
+	//tranzakció
+
+	tx, err := t.db.Begin()
+	if err != nil {
+		return fmt.Errorf("failed to beging transaction: %w", err)
+	}
+
+	// bármi hiba - rollback
+	defer tx.Rollback()
+
+	// törlés a playlist táblából - FONTOS: t.Exec() nem t.db.Exec()
+	_, err = tx.Exec(`DELETE FROM playlist_track WHERE track_id = $1`, trackId)
+	if err != nil {
+		return fmt.Errorf("failed to remove track from playlist: %w", err)
+	}
+
+	// törlés a track táblából
+	result, err := tx.Exec("DELETE FROM playlist_track WHERE track_id = $1", trackId)
+	if err != nil {
+		return fmt.Errorf("failed to delete track: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("error getting rows affected: %w", err)
+	}
+
+	if rowsAffected == 0 {
+		return fmt.Errorf("no track was deleted")
+	}
+
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf("failed to commit transaction: %w", err)
+	}
+
+	return nil
+}
