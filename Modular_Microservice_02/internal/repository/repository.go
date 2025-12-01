@@ -153,3 +153,68 @@ func (t *TrackRepository) UpdateTrackDuration(trackId int, newDuration int) erro
 
 	return nil
 }
+
+
+func (t *TrackRepository)DeleteTrack(trackId int) error {
+
+	var trackExists bool
+
+	checkTrackquery := `
+	SELECT EXISTS (
+    SELECT 1
+    FROM track t
+    WHERE t.track_id = $1
+	);
+	`
+	
+
+	checkPlaylisttrack := `
+	SELECT EXISTS (
+    SELECT 1
+    FROM playlist_track t
+    WHERE t.track_id = $1
+	);
+	`
+
+	deleteQuery := `
+	delete from track t
+	where t.track_id = $1;
+	`
+
+	err := t.db.QueryRow(checkTrackquery, trackId).Scan(&trackExists)
+	if err != nil {
+		return fmt.Errorf("error checking track existence: %w", err)
+	}
+
+	if !trackExists {
+		return fmt.Errorf("track %d not found", trackId)
+	}
+
+	var inPlaylist bool
+
+	err = t.db.QueryRow(checkPlaylisttrack, trackId).Scan(&inPlaylist)
+	if err != nil {
+		return fmt.Errorf("error checking track existance: %w", err)
+	}
+
+	if inPlaylist {
+		return fmt.Errorf("cannot delete: track %d is in playlists", trackId)
+	}
+
+
+	result, err := t.db.Exec(deleteQuery, trackId)
+	if err != nil {
+		return fmt.Errorf("error deleting track: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("error getting rows affected: %w", err)
+	}
+
+	if rowsAffected == 0 {
+		return fmt.Errorf("no rows deleted")
+	}
+
+	return nil
+}
