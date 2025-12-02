@@ -22,3 +22,9 @@ type AlbumStats struct {
 	TotalDuration	float64
 	AverageDuration	float64
 }
+
+type Playlist struct {
+	PlaylistId		int
+	Name			string
+	Tracks			[]Track
+}

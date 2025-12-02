@@ -8,7 +8,7 @@ import (
 )
 
 type TrackRepository struct {
-	db *sql.DB
+	db 			*sql.DB
 }
 
 func NewTrackRepository(db *sql.DB) *TrackRepository {
@@ -251,7 +251,7 @@ func (t *TrackRepository) DeleteTrackForce(trackId int) error {
 	}
 
 	// törlés a track táblából
-	result, err := tx.Exec("DELETE FROM playlist_track WHERE track_id = $1", trackId)
+	result, err := tx.Exec("DELETE FROM track WHERE track_id = $1", trackId)
 	if err != nil {
 		return fmt.Errorf("failed to delete track: %w", err)
 	}
