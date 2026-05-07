@@ -271,3 +271,52 @@ func (t *TrackRepository) DeleteTrackForce(trackId int) error {
 
 	return nil
 }
+
+// entry létrehozás user input alapján
+func (t *TrackRepository) CreateTrackWithValidation(track model.Track) error {
+	// szám csekk
+	var exists bool
+	checkQuery := `SELECT EXISTS (SELECT 1 FROM track where track_id = $1)`
+
+	err := t.db.QueryRow(checkQuery, track.TrackId).Scan(&exists)
+	if err != nil {
+		return fmt.Errorf("error checking track existence: %w", err)
+	}
+
+	if exists {
+		return fmt.Errorf("track with ID %d already exists", track.TrackId)
+	}
+
+	// album csekk
+	var albumExists bool
+	albumQuery := `SELECT EXISTS (SELECT 1 FROM album where album_id = $1)`
+
+	err = t.db.QueryRow(albumQuery, track.AlbumId).Scan(&albumExists)
+	if err != nil {
+		return fmt.Errorf("error checking album existence: %w", err)
+	}
+
+	if !albumExists {
+		return fmt.Errorf("album with ID %d does not exist", track.AlbumId)
+	}
+
+	//insert
+	insertQuery := `
+		INSERT INTO track (track_id, name, album_id, milliseconds, media_type_id, unit_price)
+		VALUEs ($1, $2, $3, $4, $5, $6)
+	`
+
+	_, err = t.db.Exec(insertQuery,
+		track.TrackId,
+		track.Name,
+		track.AlbumId,
+		track.Milliseconds,
+		track.MediaTypeId,
+		track.UnitPrice,)
+
+	if err != nil {
+		return fmt.Errorf("failed to insert track: %w", err)
+	}
+
+	return nil
+}

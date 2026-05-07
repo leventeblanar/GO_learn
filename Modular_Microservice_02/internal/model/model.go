@@ -28,3 +28,12 @@ type Playlist struct {
 	Name			string
 	Tracks			[]Track
 }
+
+type AlbumStatistics struct {
+	ID				int
+	ArtistName		string
+	AlbumTitle		string
+	TrackCount		int
+	TotalMinutes	int64
+	AverageMinutes	int64
+}
